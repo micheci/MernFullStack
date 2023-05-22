@@ -43,7 +43,7 @@ router.delete("/:id",async (req,res)=>{
         const delTask=await Task.findByIdAndDelete(req.params.id)
        
         res.status(200).json(delTask)
-        console.log('succese update')
+        console.log('deleted task')
     } catch (error) {
         res.status(500).json(error)
         console.log('failed to delete db')

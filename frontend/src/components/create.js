@@ -1,27 +1,43 @@
 import React, { useEffect, useState } from 'react'
 import axios, { Axios } from 'axios'
+import { Dispatch } from 'react';
+
+import {useTaskListContext} from "../hooks/useTaskListContext"
 
 function Create() {
 
     const [name, setName] = useState("");
-    const [taskList, setTaskList] = useState([])
+    //const [taskList, setTaskList] = useState([])
+  const {taskList,dispatch}=useTaskListContext()
    
-    function onSubmit(e) {
-      e.preventDefault(e)
+    function deleteItem(){
+      console.log(taskList)
+    }
+
+    async function onSubmit() {
+     
         console.log(name)
-        axios.post('http://localhost:3001/api', 
+        await axios.post('http://localhost:3001/api', 
            {taskName: name, 
            });
+           axios.get('http://localhost:3001/api').then((response) => {
+            setName('')
+            dispatch({type:'CREATE_TASK',payload:response.data});
+         });
     }
+
     useEffect(()=>{
       
-      axios.get('http://localhost:3001/api').then((response) => {
-        setTaskList(response.data);
-     });
-  }, []);
+      const getData=async()=>{axios.get('http://localhost:3001/api').then((response) => {
+        dispatch({type:'SET_TASKLIST',payload:response.data});
+     });}
+     getData();
+     
+  }, [dispatch]);
+  
 
   function onDelete(id,e){
-    e.preventDefault();
+   
    axios.delete(`http://localhost:3001/api/${id}`)
    .then(res=>console.log('deleted'))
   }
@@ -30,27 +46,25 @@ function Create() {
   return (
     <>
     <div>create</div>
-    <form>
+    <form onSubmit={onSubmit}>
       <label>Enter your name:
         <input  type="text" 
           value={name}
           onChange={(e) => setName(e.target.value)} />
       </label>
-      <button type='submit' onClick={onSubmit}>Show Task</button>
+      <button type='submit' >Show Task</button>
     </form>
-    {taskList.map((item) => {
-       return (
-          <ul  key={item._id}>
-             <li >{item._id}{item.taskName}
-             </li> 
-             <button onClick={(e)=>{onDelete(item._id,e)}} ></button>
-            
-          </ul>
-       );
+    {taskList && taskList.map((item) => {
+      return(
+        <div className='tasks'>
+          <p key={item._id}>{item.taskName}</p>
+          <button onClick={(e)=>{onDelete(item._id,e)}} >Delete</button>
+
+        </div>
+         
+      )
     })}
-    {/* <form>
-     <button onClick={onDelete}>Dealete</button>
-    </form> */}
+   <p>Test under</p>
     </>
   )
 }
