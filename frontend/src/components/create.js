@@ -10,9 +10,7 @@ function Create() {
     //const [taskList, setTaskList] = useState([])
   const {taskList,dispatch}=useTaskListContext()
    
-    function deleteItem(){
-      console.log(taskList)
-    }
+    
 
     async function onSubmit() {
      
@@ -36,10 +34,11 @@ function Create() {
   }, [dispatch]);
   
 
-  function onDelete(id,e){
+   function onDelete(id,e){
    
    axios.delete(`http://localhost:3001/api/${id}`)
-   .then(res=>console.log('deleted'))
+   .then((res)=>{dispatch({type:'DELETE_TASK',payload:res.data});
+  })
   }
 
 

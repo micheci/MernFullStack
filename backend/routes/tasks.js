@@ -43,7 +43,21 @@ router.delete("/:id",async (req,res)=>{
         const delTask=await Task.findByIdAndDelete(req.params.id)
        
         res.status(200).json(delTask)
-        console.log('deleted task')
+        console.log(delTask)
+    } catch (error) {
+        res.status(500).json(error)
+        console.log('failed to delete db')
+    }
+})
+router.patch("/:id",async (req,res)=>{
+    
+    try {
+        const putTask=await Task.findOneAndUpdate({_id: req.params.id}, {
+            taskName:req.body.taskName
+          })
+       
+        res.status(200).json(putTask)
+        console.log(putTask)
     } catch (error) {
         res.status(500).json(error)
         console.log('failed to delete db')
